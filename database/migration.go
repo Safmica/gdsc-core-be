@@ -17,6 +17,7 @@ func DBMigration() {
 		&models.Configure{},
 		&models.Activity{},
 		&models.FinalProject{},
+		&models.Token{},
 	)
 	if err != nil {
 		log.Println(err)

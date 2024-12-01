@@ -22,6 +22,7 @@ func main() {
 	routes.ConfigureRoutes(app)
 	routes.BatchRoutes(app)
 	routes.ActivityRoutes(app)
+	routes.TokenRoutes(app)
 
 	app.Listen(":3000")
 }

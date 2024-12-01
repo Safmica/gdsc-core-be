@@ -19,14 +19,16 @@ func GenerateJwt(user models.User, expiration time.Time, tokenType string) (stri
 
 	batch := models.Batch{}
 	member := models.Member{}
+	role := models.Role{}
 
 	database.DB.Select("id_batch").Where("year = ?", user.CurrentBatch).First(&batch)
 	database.DB.Select("id_role").Where("id_user = ? AND id_batch = ?", user.IDUser, batch.IDBatch).First(&member)
+	database.DB.Select("nama").Where("id_role = ?", member.IDRole).First(&role)
 
 	claims := jwt.MapClaims{
 		"id":    user.IDUser,
 		"id_member": member.IDMember,
-		"role":  member.IDRole,
+		"role":  role.Nama,
 		"batch": user.CurrentBatch,
 		"exp":   expiration.Unix(),
 		"type":  tokenType,
@@ -40,7 +42,7 @@ func GenerateJwt(user models.User, expiration time.Time, tokenType string) (stri
 	return tokenString, err
 }
 
-func GenerateNewJwt(id uuid.UUID, role uuid.UUID, batch int, expiration time.Time, tokenType string) (string, error) {
+func GenerateNewJwt(id uuid.UUID, id_member uuid.UUID, role string, batch int, expiration time.Time, tokenType string) (string, error) {
 	SecretKey, err := database.SecretKeyInit()
 	if err != nil {
 		fmt.Println("Error fetching secret key:", err)
@@ -49,6 +51,7 @@ func GenerateNewJwt(id uuid.UUID, role uuid.UUID, batch int, expiration time.Tim
 
 	claims := jwt.MapClaims{
 		"id":    id,
+		"id_member": id_member,
 		"role":  role,
 		"batch": batch,
 		"exp":   expiration.Unix(),

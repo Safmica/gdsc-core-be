@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"gdsc-core-be/controllers/validation"
+	"gdsc-core-be/cookies"
 	"gdsc-core-be/database"
 	"gdsc-core-be/models"
 	"gdsc-core-be/utils"
@@ -10,6 +11,75 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
+
+func UserLogin(ctx *fiber.Ctx) error {
+	user := new(models.User)
+
+	if err := ctx.BodyParser(user); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+
+	id, accessToken, refreshToken, err := validation.UserLoginValidation(user, ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	cookies.SetJwtCookie(ctx, accessToken)
+	cookies.SetRefreshTokenCookie(ctx, refreshToken)
+
+	var response models.User
+	result := database.DB.First(&response, id)
+	if err = validation.EntityByIDValidation(result, "user"); err != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.JSON(fiber.Map{
+		"users": response,
+		"token": accessToken,
+	})
+}
+
+func UserLogout(ctx *fiber.Ctx) error {
+	refreshToken := ctx.Cookies("refresh_token")
+	if refreshToken == "" {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "you are already logged out",
+		})
+	}
+
+	claims, err := utils.DecodeJwtWithRole(refreshToken)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid refresh token",
+		})
+	}
+
+	id, ok := claims["id"]
+	if !ok {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token claims",
+		})
+	}
+
+	var token models.Token
+	result := database.DB.Model(&token).Where("id_user = ?", id).Update("refresh_token", "")
+	if result.Error != nil {
+		return result.Error
+	}
+
+	cookies.ClearJwtCookie(ctx)
+	cookies.ClearRefreshTokenCookie(ctx)
+
+	return ctx.JSON(fiber.Map{
+		"message": "logout successful",
+	})
+}
 
 func GetAllUser(ctx *fiber.Ctx) error {
 	var users []models.User

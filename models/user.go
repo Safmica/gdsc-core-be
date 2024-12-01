@@ -12,7 +12,7 @@ type User struct {
 	Password       string    `gorm:"type:varchar(255);column:password" json:"password"`
 	NewPassword    string    `gorm:"-" json:"new_password"`
 	Name           string    `gorm:"type:varchar(100);column:name" json:"name"`
-	Email          string    `gorm:"type:varchar(100);column:email" json:"email"`
+	Email          string    `gorm:"type:varchar(100);unique;column:email" json:"email"`
 	University     string    `gorm:"type:varchar(100);column:university" json:"university"`
 	Major          string    `gorm:"type:varchar(50);column:major" json:"major"`
 	Year           int       `gorm:"type:year;column:year" json:"year"`
