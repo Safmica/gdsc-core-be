@@ -9,6 +9,7 @@ import (
 
 type FinalProject struct {
 	IDFinalProject uuid.UUID `gorm:"type:char(36);primaryKey;column:id_final_project" json:"id_final_project"`
+	IDMember       uuid.UUID    `gorm:"type:char(36);primaryKey;column:id_member" json:"id_member"` 
 	Title          string    `gorm:"type:varchar(100);column:title" json:"title"`
 	Description    string    `gorm:"type:text;column:description" json:"description"`
 	Url            string    `gorm:"type:varchar(255);column:url" json:"url"`
