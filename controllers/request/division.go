@@ -97,7 +97,7 @@ func CreateDivision(ctx *fiber.Ctx) error {
 
 func UpdateDivision(ctx *fiber.Ctx) error {
 	divisionID := ctx.Params("iddivision")
-	divisionNew := models.Division{}
+	divisionNew := new(models.Division)
 	division := models.Division{}
 
 	idUUID, err := uuid.Parse(divisionID)

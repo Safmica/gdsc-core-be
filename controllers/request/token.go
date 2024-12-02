@@ -45,6 +45,8 @@ func RefreshToken(ctx *fiber.Ctx) error {
 	if refreshToken != token.RefreshToken {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "invalid refresh token",
+			"refresh_token": token.RefreshToken,
+			"refreshToken": refreshToken,
 		})
 	}
 

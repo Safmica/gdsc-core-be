@@ -96,7 +96,7 @@ func CreateFinalProject(ctx *fiber.Ctx) error {
 
 func UpdateFinalProject(ctx *fiber.Ctx) error {
 	finalProjectID := ctx.Params("idfinalProject")
-	finalProjectNew := models.FinalProject{}
+	finalProjectNew := new(models.FinalProject)
 	finalProject := models.FinalProject{}
 
 	idUUID, err := uuid.Parse(finalProjectID)

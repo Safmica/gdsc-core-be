@@ -10,7 +10,7 @@ func SetJwtCookie(ctx *fiber.Ctx, token string) {
 	ctx.Cookie(&fiber.Cookie{
 		Name:     "access_token",
 		Value:    token,
-		Expires:  time.Now().Add(time.Second * 30),
+		Expires:  time.Now().Add(time.Hour * 30),
 		HTTPOnly: true,
 	})
 }

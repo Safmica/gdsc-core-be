@@ -179,9 +179,13 @@ func UpdateUser(ctx *fiber.Ctx) error {
 		})
 	}
 
-	if err := ctx.BodyParser(userNew); err != nil {
+	body := ctx.Body()
+fmt.Println("Request Body:", string(body))
+
+
+	if err := ctx.BodyParser(&userNew); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
+			"error": userNew,
 		})
 	}
 

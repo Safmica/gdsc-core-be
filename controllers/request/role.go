@@ -36,7 +36,7 @@ func CreateRole(ctx *fiber.Ctx) error {
 
 func UpdateRole(ctx *fiber.Ctx) error {
 	roleID := ctx.Params("idrole")
-	roleNew := models.Role{}
+	roleNew := new(models.Role)
 	role := models.Role{}
 
 	idUUID, err := uuid.Parse(roleID)

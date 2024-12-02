@@ -97,7 +97,7 @@ func CreateActivity(ctx *fiber.Ctx) error {
 
 func UpdateActivity(ctx *fiber.Ctx) error {
 	activityID := ctx.Params("idactivity")
-	activityNew := models.Activity{}
+	activityNew := new(models.Activity)
 	activity := models.Activity{}
 
 	idUUID, err := uuid.Parse(activityID)

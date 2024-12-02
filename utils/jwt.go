@@ -22,7 +22,7 @@ func GenerateJwt(user models.User, expiration time.Time, tokenType string) (stri
 	role := models.Role{}
 
 	database.DB.Select("id_batch").Where("year = ?", user.CurrentBatch).First(&batch)
-	database.DB.Select("id_role").Where("id_user = ? AND id_batch = ?", user.IDUser, batch.IDBatch).First(&member)
+	database.DB.Select("id_role, id_member").Where("id_user = ? AND id_batch = ?", user.IDUser, batch.IDBatch).First(&member)
 	database.DB.Select("nama").Where("id_role = ?", member.IDRole).First(&role)
 
 	claims := jwt.MapClaims{
@@ -128,7 +128,7 @@ func DecodeJwtWithRole(tokenString string) (jwt.MapClaims, error) {
 }
 
 func GenerateTokens(user models.User) (string, string, error) {
-	accessToken, err := GenerateJwt(user, time.Now().Add(30*time.Second), "access")
+	accessToken, err := GenerateJwt(user, time.Now().Add(30*time.Hour), "access")
 	if err != nil {
 		return "", "", err
 	}

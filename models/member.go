@@ -15,7 +15,7 @@ type Member struct {
 	Email        string       `gorm:"-" json:"email"`
 	IDDivision   uuid.UUID    `gorm:"type:char(36);column:id_division" json:"id_division"`
 	Activities   []Activity   `gorm:"many2many:participant;foreignKey:IDMember;joinForeignKey:IDMember;References:IDActivity;joinReferences:IDActivity" json:"activities"`
-	FinalProject FinalProject `gorm:"foreignKey:IDFinalProject" json:"final_project"`
+	FinalProject FinalProject `gorm:"foreignKey:IDMember" json:"final_project"`
 
 	CreatedAt time.Time      `json:"-" gorm:"autoCreateTime"`
 	UpdatedAt time.Time      `json:"-" gorm:"autoUpdateTime"`

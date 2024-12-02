@@ -44,12 +44,6 @@ func CreateParticipant(ctx *fiber.Ctx) error {
 		})
 	}
 
-	if err := ctx.BodyParser(participant); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
-		})
-	}
-
 	participant.IDParticipant = uuid.New()
 
 	accessToken := ctx.Cookies("access_token")
@@ -61,7 +55,21 @@ func CreateParticipant(ctx *fiber.Ctx) error {
 	}
 
 	member := models.Member{}
-	idMember := claims["id_member"]
+	idMember := claims["id_member"].(string)
+
+	idUUID, err = uuid.Parse(idMember)
+	if err != nil {
+		fmt.Println("Invalid UUID format:", err)
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid UUID format",
+		})
+	}
+
+	if idUUID == uuid.Nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "id not valid",
+		})
+	}
 
 	database.DB.Where("id_member =?",idMember).First(&member)
 

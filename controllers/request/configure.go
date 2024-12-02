@@ -1,33 +1,17 @@
 package controller
 
 import (
-	"fmt"
 	"gdsc-core-be/controllers/validation"
 	"gdsc-core-be/database"
 	"gdsc-core-be/models"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 )
 
 func UpdateConfigure(ctx *fiber.Ctx) error {
 	configureID := ctx.Params("idconfigure")
-	configureNew := models.Configure{}
+	configureNew := new(models.Configure)
 	configure := models.Configure{}
-
-	idUUID, err := uuid.Parse(configureID)
-	if err != nil {
-		fmt.Println("Invalid UUID format:", err)
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid UUID format",
-		})
-	}
-
-	if idUUID == uuid.Nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "id not valid",
-		})
-	}
 
 	if err := ctx.BodyParser(configureNew); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -35,8 +19,8 @@ func UpdateConfigure(ctx *fiber.Ctx) error {
 		})
 	}
 
-	result := database.DB.Where("id_configure =?", idUUID).First(&configure)
-	if err = validation.EntityByIDValidation(result, "dosen"); err != nil {
+	result := database.DB.Where("id_configure =?", configureID).First(&configure)
+	if err := validation.EntityByIDValidation(result, "dosen"); err != nil {
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": err.Error(),
 		})

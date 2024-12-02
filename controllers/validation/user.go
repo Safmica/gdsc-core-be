@@ -21,7 +21,7 @@ func UserLoginValidation(user *models.User, ctx *fiber.Ctx) (uuid.UUID, string, 
 	}
 
 	if user.Email == "" {
-		return uuid.UUID{}, "", "", errors.New("NIDN is required")
+		return uuid.UUID{}, "", "", errors.New("email is required")
 	}
 
 	if user.Password == "" {
@@ -49,7 +49,8 @@ func UserLoginValidation(user *models.User, ctx *fiber.Ctx) (uuid.UUID, string, 
 	}
 
 	if tokenResult.RowsAffected > 0 {
-		updateResult := database.DB.Model(&token).Where("id_user = ?", existingUser.IDUser).Update("refresh_token", refreshToken)
+		token.RefreshToken = refreshToken
+		updateResult := database.DB.Where("id_user = ?", existingUser.IDUser).Save(&token)
 		if updateResult.Error != nil {
 			return uuid.UUID{}, "", "", updateResult.Error
 		}

@@ -9,7 +9,7 @@ import (
 
 type Token struct {
 	IDUser       uuid.UUID `gorm:"type:char(36);column:id_user;primaryKey" json:"id_user"`
-	RefreshToken string    `gorm:"type:varchar(255);column:refresh_token" json:"refresh_token"`
+	RefreshToken string    `gorm:"type:text;column:refresh_token" json:"refresh_token"`
 
 	CreatedAt time.Time      `json:"-" gorm:"autoCreateTime"`
 	UpdatedAt time.Time      `json:"-" gorm:"autoUpdateTime"`
